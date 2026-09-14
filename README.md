@@ -34,3 +34,15 @@ full-stack-internship-starter/
 │
 ├── .gitignore
 └── README.md
+
+### GET `/api/health`
+
+Returns the current backend health status.
+
+Example response:
+
+```json
+{
+  "status": "OK",
+  "message": "Backend is healthy"
+}
