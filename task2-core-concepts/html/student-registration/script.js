@@ -1,6 +1,27 @@
 const form = document.getElementById("registrationForm");
 const message = document.getElementById("message");
 
+const students = [
+    {
+    firstName: "Satyavati",
+    lastName: "Thakur",
+    course: "MCA",
+    age: 24
+},
+{
+        firstName: "Aman",
+        lastName: "Sharma",
+        course: "B.Tech",
+        age: 22
+    },
+    {
+        firstName: "Priya",
+        lastName: "Singh",
+        course: "M.Tech",
+        age: 28
+    }
+];
+
 form.addEventListener("submit", function(event) {
     event.preventDefault();
     const fName = document.getElementById("fname").value.trim();
