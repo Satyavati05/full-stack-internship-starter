@@ -2,44 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Students API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
 </head>
 
 <body>
 
-    <h1>Student List</h1>
-
-    <div id="students"></div>
-
-    <hr>
+    <h1>Student Management System</h1>
 
     <h2>Add Student</h2>
 
     <form id="studentForm">
 
-        <label for="firstName">First Name:</label>
-        <input type="text" id="firstName">
+        <input
+            type="text"
+            id="firstName"
+            placeholder="First Name"
+            required
+        >
 
-        <br><br>
+        <input
+            type="text"
+            id="lastName"
+            placeholder="Last Name"
+            required
+        >
 
-        <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName">
+        <input
+            type="text"
+            id="course"
+            placeholder="Course"
+            required
+        >
 
-        <br><br>
-
-        <label for="course">Course:</label>
-        <input type="text" id="course">
-
-        <br><br>
-
-        <label for="age">Age:</label>
-        <input type="number" id="age">
-
-        <br><br>
+        <input
+            type="number"
+            id="age"
+            placeholder="Age"
+            required
+        >
 
         <button type="submit">Add Student</button>
 
     </form>
+
+    <p id="message"></p>
+
+    <h2>Student List</h2>
+
+    <div id="studentList"></div>
 
     <script src="script.js"></script>
 
