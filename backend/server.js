@@ -1,34 +1,13 @@
 const express = require("express");
 const cors = require("cors");
+const db = require("./database");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-let students = [
-    {
-        id: 1,
-        firstName: "Satyavati",
-        lastName: "Thakur",
-        course: "MCA",
-        age: 24
-    },
-    {
-        id: 2,
-        firstName: "Aman",
-        lastName: "Sharma",
-        course: "B.Tech",
-        age: 22
-    },
-    {
-        id: 3,
-        firstName: "Priya",
-        lastName: "Singh",
-        course: "M.Tech",
-        age: 25
-    }
-];
+
 
 app.get("/api/hello", (req, res) => {
     res.json({
@@ -37,58 +16,104 @@ app.get("/api/hello", (req, res) => {
 });
 
 app.get("/api/students", (req, res) => {
+
+    console.log("GET request received:", req.originalUrl);
+    console.log("Course:", req.query.course);
+
+    const { course } = req.query;
+
+    if (course) {
+        const students = db
+            .prepare("SELECT * FROM students WHERE course = ?")
+            .all(course);
+
+        return res.json(students);
+    }
+
+    const students = db.prepare("SELECT * FROM students").all();
+
     res.json(students);
 });
 
 app.post("/api/students", (req, res) => {
-    const newStudent = {
-        id: students.length
-            ? Math.max(...students.map(student => student.id)) + 1
-            : 1,
-        ...req.body
-    };
+    const { firstName, lastName, course, age } = req.body;
 
-    students.push(newStudent);
+    if (!firstName || !lastName || !course || !age) {
+        return res.status(400).json({
+            message: "All fields are required"
+        });
+    }
+
+    const statement = db.prepare(`
+        INSERT INTO students (firstName, lastName, course, age)
+        VALUES (?, ?, ?, ?)
+    `);
+
+    const result = statement.run(firstName, lastName, course, age);
+
+    const newStudent = db
+        .prepare("SELECT * FROM students WHERE id = ?")
+        .get(result.lastInsertRowid);
 
     res.status(201).json(newStudent);
 });
 
 app.put("/api/students/:id", (req, res) => {
     const id = Number(req.params.id);
+    const { firstName, lastName, course, age } = req.body;
 
-    const student = students.find(student => student.id === id);
+    if (!firstName || !lastName || !course || !age) {
+        return res.status(400).json({
+            message: "All fields are required"
+        });
+    }
 
-    if (!student) {
+    const statement = db.prepare(`
+        UPDATE students
+        SET firstName = ?, lastName = ?, course = ?, age = ?
+        WHERE id = ?
+    `);
+
+    const result = statement.run(
+        firstName,
+        lastName,
+        course,
+        age,
+        id
+    );
+
+    if (result.changes === 0) {
         return res.status(404).json({
             message: "Student not found"
         });
     }
 
-    student.firstName = req.body.firstName;
-    student.lastName = req.body.lastName;
-    student.course = req.body.course;
-    student.age = req.body.age;
+    const updatedStudent = db
+        .prepare("SELECT * FROM students WHERE id = ?")
+        .get(id);
 
-    res.json(student);
+    res.json(updatedStudent);
 });
 
 
 app.delete("/api/students/:id", (req, res) => {
     const id = Number(req.params.id);
 
-    const studentIndex = students.findIndex(student => student.id === id);
+    const statement = db.prepare(`
+        DELETE FROM students
+        WHERE id = ?
+    `);
 
-    if (studentIndex === -1) {
+    const result = statement.run(id);
+
+    if (result.changes === 0) {
         return res.status(404).json({
             message: "Student not found"
         });
-    }
-
-    const deletedStudent = students.splice(studentIndex, 1);
+}
 
     res.json({
-        message: "Student deleted successfully",
-        student: deletedStudent[0]
+        message: "Student deleted successfully"
     });
 });
 

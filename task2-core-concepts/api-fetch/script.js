@@ -1,6 +1,7 @@
 const studentForm = document.getElementById("studentForm");
 const message = document.getElementById("message");
 let editingStudentId = null;
+const submitButton = document.getElementById("submitButton");
 
 studentForm.addEventListener("submit", async function(event) {
     event.preventDefault();
@@ -45,8 +46,9 @@ studentForm.addEventListener("submit", async function(event) {
         message.textContent = "Student updated successfully!";
 
         editingStudentId = null;
-
+        
         studentForm.reset();
+        submitButton.textContent = "Add Student";
 
         getStudents();
 
@@ -152,6 +154,7 @@ function editStudent(student) {
     document.getElementById("age").value = student.age;
 
     message.textContent = "Editing student...";
+    submitButton.textContent = "Update Student";
 
 }
 
