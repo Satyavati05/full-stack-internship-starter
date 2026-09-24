@@ -7,6 +7,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+function validateStudent(data) {
+    const { firstName, lastName, course, age } = data;
+
+    if (!firstName || !lastName || !course || age === undefined) {
+        return "All fields are required";
+    }
+
+    if (typeof firstName !== "string" ||
+        typeof lastName !== "string" ||
+        typeof course !== "string") {
+        return "Name and course must be text";
+    }
+
+    if (!Number.isInteger(age) || age <= 0) {
+        return "Age must be a positive number";
+    }
+
+    return null;
+}
 
 
 app.get("/api/hello", (req, res) => {
@@ -38,9 +57,10 @@ app.get("/api/students", (req, res) => {
 app.post("/api/students", (req, res) => {
     const { firstName, lastName, course, age } = req.body;
 
-    if (!firstName || !lastName || !course || !age) {
+    const validationError = validateStudent(req.body);
+    if (validationError) {
         return res.status(400).json({
-            message: "All fields are required"
+            message: validationError
         });
     }
 
@@ -62,9 +82,11 @@ app.put("/api/students/:id", (req, res) => {
     const id = Number(req.params.id);
     const { firstName, lastName, course, age } = req.body;
 
-    if (!firstName || !lastName || !course || !age) {
+    const validationError = validateStudent(req.body);
+    
+    if (validationError) {
         return res.status(400).json({
-            message: "All fields are required"
+            message: validationError
         });
     }
 
